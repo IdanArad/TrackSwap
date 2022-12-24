@@ -30,6 +30,7 @@ public class RegistrationActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
+        Log.d("Register", "register");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_registration);
 
@@ -37,23 +38,16 @@ public class RegistrationActivity extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
 
         // initialising all views through id defined above
-        final LayoutInflater factory = getLayoutInflater();
-        final View textEntryView = factory.inflate(R.layout.activity_registration, null);
-
-        emailTextView = (EditText) textEntryView.findViewById(R.id.email_et);
-        // emailTextView = findViewById(R.id.email_et);
-        // passwordTextView = findViewById(R.id.password_et);
-        passwordTextView = (EditText) textEntryView.findViewById(R.id.password_et);
-
-        Btn = (Button) textEntryView.findViewById(R.id.register_btn);
-        //progressbar = findViewById(R.id.progressbar);
+        emailTextView = findViewById(R.id.email);
+        passwordTextView = findViewById(R.id.passwd);
+        Btn = findViewById(R.id.btnregister);
+        progressbar = findViewById(R.id.progressbar);
 
         // Set on Click Listener on Registration button
         Btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v)
             {
-                Log.w("Register auth", "Clicking register");
                 registerNewUser();
             }
         });
@@ -62,7 +56,6 @@ public class RegistrationActivity extends AppCompatActivity {
     private void registerNewUser()
     {
 
-        Log.w("Register auth", "Entered register");
         // show the visibility of progress bar to show loading
         progressbar.setVisibility(View.VISIBLE);
 

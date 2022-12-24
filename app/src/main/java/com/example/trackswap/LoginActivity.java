@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.content.Intent;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.Toast;
@@ -21,6 +22,7 @@ public class LoginActivity extends AppCompatActivity {
     private EditText emailTextView, passwordTextView;
     private Button Btn;
     private ProgressBar progressbar;
+    private TextView registerRedirct;
 
     private FirebaseAuth mAuth;
     @Override
@@ -28,7 +30,6 @@ public class LoginActivity extends AppCompatActivity {
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-        // taking instance of FirebaseAuth
         mAuth = FirebaseAuth.getInstance();
 
         // initialising all views through id defined above
@@ -36,6 +37,7 @@ public class LoginActivity extends AppCompatActivity {
         passwordTextView = findViewById(R.id.password);
         Btn = findViewById(R.id.login);
         progressbar = findViewById(R.id.progressBar);
+        registerRedirct = findViewById(R.id.register_redirect);
 
         // Set on Click Listener on Sign-in button
         Btn.setOnClickListener(new View.OnClickListener() {
@@ -45,6 +47,17 @@ public class LoginActivity extends AppCompatActivity {
                 loginUserAccount();
             }
         });
+        registerRedirct.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v)
+            {
+                Intent intent
+                        = new Intent(LoginActivity.this,
+                    RegistrationActivity.class);
+                startActivity(intent);
+            }
+        });
+
     }
 
     private void loginUserAccount()
@@ -99,9 +112,7 @@ public class LoginActivity extends AppCompatActivity {
                                             MainActivity.class);
                                     startActivity(intent);
                                 }
-
                                 else {
-
                                     // sign-in failed
                                     Toast.makeText(getApplicationContext(),
                                                     "Login failed!!",
