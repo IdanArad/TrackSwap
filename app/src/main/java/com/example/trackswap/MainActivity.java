@@ -24,7 +24,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
@@ -34,10 +33,6 @@ public class MainActivity extends AppCompatActivity {
 
         BottomNavigationView navView = findViewById(R.id.main_bottomNavigationView);
         NavigationUI.setupWithNavController(navView,navController);
-
-        mFirestore = FirebaseFirestore.getInstance();
-        Firestore firestore = new Firestore(mFirestore);
-        firestore.getPublishedTracks();
     }
 
     int fragmentMenuId = 0;

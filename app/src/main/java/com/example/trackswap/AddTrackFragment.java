@@ -8,6 +8,8 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.Lifecycle;
 import androidx.navigation.Navigation;
+
+import android.util.Log;
 import android.view.Menu;
 import android.view.LayoutInflater;
 import android.view.MenuInflater;
@@ -16,13 +18,18 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.trackswap.model.Model;
-import com.example.trackswap.model.Track;
+import com.example.trackswap.model.Firestore;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.firestore.DocumentReference;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class AddTrackFragment extends Fragment {
+    private static final String TAG = "AddTrackFragment";
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -54,7 +61,28 @@ public class AddTrackFragment extends Fragment {
 
         saveBtn.setOnClickListener(view1 -> {
             String name = nameEt.getText().toString();
-            Model.instance().addTrack(new Track(name,"1"));
+
+            // Add a new document with a generated id.
+            Map<String, Object> data = new HashMap<>();
+            data.put("name", name);
+            data.put("artist", "TRY");
+
+            Firestore.instance().getDb().collection("published_tracks")
+                    .add(data)
+                    .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                        @Override
+                        public void onSuccess(DocumentReference documentReference) {
+                            Log.d(TAG, "DocumentSnapshot written with ID: " + documentReference.getId());
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Log.w(TAG, "Error adding document", e);
+                        }
+                    });
+
+          //  Model.instance().addTrack(new Track(name,"1"));
             Toast.makeText(getContext(),
                             "Publish Successful!",
                             Toast.LENGTH_LONG)

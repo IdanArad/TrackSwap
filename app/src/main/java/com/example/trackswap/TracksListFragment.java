@@ -30,6 +30,7 @@ public class TracksListFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_tracks_list, container, false);
+        Firestore.instance().getPublishedTracks();
         data = Model.instance().getAllTracks();
         RecyclerView list = view.findViewById(R.id.tracklistfrag_list);
         list.setHasFixedSize(true);
