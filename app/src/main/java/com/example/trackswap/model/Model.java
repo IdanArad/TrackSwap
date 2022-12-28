@@ -19,6 +19,17 @@ public class Model {
         return data;
     }
 
+    public List<Track> getMyTracks(String uid) {
+        List<Track> mytracks = new LinkedList<>();
+        for (int i = 0; i < data.size(); i++) {
+            if (data.get(i).publisher_uid.equals(uid)) {
+                mytracks.add(data.get(i));
+            }
+        }
+        return mytracks;
+    }
+
+
     public boolean isExist(Track track) {
             for (int i = 0; i < data.size(); i++) {
                 if (data.get(i).name.equals(track.name)) {

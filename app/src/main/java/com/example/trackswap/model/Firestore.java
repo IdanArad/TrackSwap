@@ -6,6 +6,7 @@ import androidx.annotation.NonNull;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreSettings;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -41,7 +42,7 @@ public class Firestore {
                                 Log.d(TAG, document.getId() + " => " + document.getData());
                                 JSONObject jsonObject = new JSONObject(document.getData());
                                 try {
-                                    Track currentTrack = new Track(jsonObject.getString("name"), jsonObject.getString("artist"));
+                                    Track currentTrack = new Track(jsonObject.getString("name"), jsonObject.getString("artist"), jsonObject.getString("publisher_uid"));
                                     jsonObject.getString("artist");
                                     if (!Model.instance().isExist(currentTrack)) {
                                         Model.instance().addTrack(currentTrack);

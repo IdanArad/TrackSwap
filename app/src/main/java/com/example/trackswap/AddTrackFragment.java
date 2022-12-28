@@ -23,6 +23,7 @@ import android.widget.Toast;
 import com.example.trackswap.model.Firestore;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 
 import java.util.HashMap;
@@ -66,6 +67,7 @@ public class AddTrackFragment extends Fragment {
             Map<String, Object> data = new HashMap<>();
             data.put("name", name);
             data.put("artist", "TRY");
+            data.put("publisher_uid", FirebaseAuth.getInstance().getCurrentUser().getUid());
 
             Firestore.instance().getDb().collection("published_tracks")
                     .add(data)

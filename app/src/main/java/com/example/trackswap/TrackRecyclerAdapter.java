@@ -34,7 +34,7 @@ class TrackViewHolder extends RecyclerView.ViewHolder{
 
     public void bind(Track track, int pos) {
         nameTv.setText(track.name);
-        idTv.setText(track.id);
+        idTv.setText(track.artist);
     }
 }
 
