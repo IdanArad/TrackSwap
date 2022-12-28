@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/tracksListFragment">
+
+    <fragment
+        android:id="@+id/tracksListFragment"
+        android:name="com.example.trackswap.TracksListFragment"
+        android:label="Tracks List"
+        tools:layout="@layout/fragment_tracks_list">
+        <action
+            android:id="@+id/action_tracksListFragment_to_blueFragment"
+            app:destination="@id/blueFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/blueFragment"
+        android:name="com.example.trackswap.BlueFragment"
+        android:label="fragment_blue"
+        tools:layout="@layout/fragment_blue" >
+        <argument
+            android:name="blueTitle"
+            app:argType="string" />
+    </fragment>
+    <fragment
+        android:id="@+id/addTrackFragment"
+        android:name="com.example.trackswap.AddTrackFragment"
+        android:label="Add Track"
+        tools:layout="@layout/fragment_add_track" />
+    <action android:id="@+id/action_global_addTrackFragment" app:destination="@id/addTrackFragment" />
+    <fragment
+        android:id="@+id/aboutFragment"
+        android:name="com.example.trackswap.AboutFragment"
+        android:label="About"
+        tools:layout="@layout/fragment_about" />
+</navigation>
