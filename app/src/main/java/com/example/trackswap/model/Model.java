@@ -1,20 +1,20 @@
 package com.example.trackswap.model;
 
+import com.google.firebase.firestore.FirebaseFirestore;
+
 import java.util.LinkedList;
 import java.util.List;
 public class Model {
     private static final Model _instance = new Model();
+    List<Track> data;
 
     public static Model instance(){
         return _instance;
     }
     private Model(){
-        for(int i=0;i<2;i++){
-            addTrack(new Track("name " + i,""+i));
-        }
+        data = new LinkedList<>();
     }
 
-    List<Track> data = new LinkedList<>();
     public List<Track> getAllTracks(){
         return data;
     }
@@ -22,9 +22,4 @@ public class Model {
     public void addTrack(Track st){
         data.add(st);
     }
-
-    public int getNextId(){
-        return this.getAllTracks().size();
-    }
-
 }
