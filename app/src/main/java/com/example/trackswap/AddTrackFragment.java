@@ -18,6 +18,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.SearchView;
 import android.widget.Toast;
 
 import com.example.trackswap.model.Firestore;
@@ -26,11 +27,30 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
 
 public class AddTrackFragment extends Fragment {
     private static final String TAG = "AddTrackFragment";
+    private static final String API_KEY = "10110a7d3dde85354cb9b949bb84bef6";
+    private Retrofit retrofit;
+    private LastFMApiService service;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -48,6 +68,10 @@ public class AddTrackFragment extends Fragment {
             }
         },this, Lifecycle.State.RESUMED);
 
+        this.retrofit = new Retrofit.Builder()
+                .baseUrl("http://ws.audioscrobbler.com/")
+                .build();
+        this.service = retrofit.create(LastFMApiService.class);
     }
 
     @Override
@@ -56,12 +80,29 @@ public class AddTrackFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_add_track, container, false);
 
-        EditText nameEt = view.findViewById(R.id.addtrack_name_et);
+        SearchView nameSv = view.findViewById(R.id.search_view);
+
+        nameSv.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                // Make a network request to the LastFM API to search for songs by song name or artist
+                searchSongs(query);
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                // You can optionally add code here to update the search results as the user types
+                return false;
+            }
+        });
+
+
+        //EditText nameEt = view.findViewById(R.id.addtrack_name_et);
         Button saveBtn = view.findViewById(R.id.addtrack_save_btn);
-        Button cancelBtn = view.findViewById(R.id.addtrack_cancell_btn);
 
         saveBtn.setOnClickListener(view1 -> {
-            String name = nameEt.getText().toString();
+            String name = nameSv.toString();
 
             // Add a new document with a generated id.
             Map<String, Object> data = new HashMap<>();
@@ -91,8 +132,52 @@ public class AddTrackFragment extends Fragment {
                     .show();
         });
 
-        cancelBtn.setOnClickListener(view1 -> Navigation.findNavController(view1).popBackStack(R.id.tracksListFragment,false));
         return view;
+    }
+
+    private void searchSongs(String query) {
+        String baseUrl = "https://ws.audioscrobbler.com/2.0/";
+        String method = "track.search";
+        String track = query;
+        String artist = query;
+        String apiKey = API_KEY;
+        String format = "json";
+
+        String url = baseUrl + "?method=" + method + "&track=" + track + "&artist=" + artist + "&api_key=" + apiKey + "&format=" + format;
+
+        HttpURLConnection connection = null;
+        try {
+            connection = (HttpURLConnection) new URL(url).openConnection();
+            connection.setRequestMethod("GET");
+
+            // Read the response from the LastFM API
+            InputStream inputStream = connection.getInputStream();
+            BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+            StringBuilder response = new StringBuilder();
+            String line;
+            while ((line = reader.readLine()) != null) {
+                response.append(line);
+            }
+            reader.close();
+
+            // Parse the response into a Java object using a JSON parser
+            Log.d(TAG, "The REsponese: " + response.toString());
+            JSONObject jsonObject = new JSONObject(response.toString());
+            JSONObject trackSearchResult = jsonObject.getJSONObject("trackmatches");
+            JSONArray tracks = trackSearchResult.getJSONArray("track");
+            Log.d(TAG, "Got Tracks!: " + tracks.toString());
+
+            // Do something with the list of tracks
+        } catch (IOException | JSONException e) {
+            System.out.println(e);
+            Log.d(TAG, "Got error: " + e);
+
+            // Handle the error
+        } finally {
+            if (connection != null) {
+                connection.disconnect();
+            }
+        }
     }
 
 }
