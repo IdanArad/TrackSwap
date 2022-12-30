@@ -3,19 +3,19 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/tracksListFragment">
+    app:startDestination="@id/postListFragment">
     <fragment
-        android:id="@+id/tracksListFragment"
-        android:name="com.example.trackswap.TracksListFragment"
+        android:id="@+id/postListFragment"
+        android:name="com.example.trackswap.PostListFragment"
         android:label="Tracks List"
-        tools:layout="@layout/fragment_tracks_list">
+        tools:layout="@layout/fragment_posts_list">
     </fragment>
     <fragment
-        android:id="@+id/addTrackFragment"
-        android:name="com.example.trackswap.AddTrackFragment"
+        android:id="@+id/addPostFragment"
+        android:name="com.example.trackswap.AddPostFragment"
         android:label="Add Track"
-        tools:layout="@layout/fragment_add_track" />
-    <action android:id="@+id/action_global_addTrackFragment" app:destination="@id/addTrackFragment" />
+        tools:layout="@layout/fragment_add_post" />
+    <action android:id="@+id/action_global_addPostFragment" app:destination="@id/addPostFragment" />
     <fragment
         android:id="@+id/profileFragment"
         android:name="com.example.trackswap.ProfileFragment"

@@ -14,33 +14,33 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.trackswap.model.Firestore;
-import com.example.trackswap.model.Track;
-import com.example.trackswap.model.Model;
+import com.example.trackswap.model.Post;
+import com.example.trackswap.model.ModelPosts;
 
 import java.util.List;
 
-public class TracksListFragment extends Fragment {
-    List<Track> data;
+public class PostListFragment extends Fragment {
+    List<Post> data;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_tracks_list, container, false);
+        View view = inflater.inflate(R.layout.fragment_posts_list, container, false);
         Firestore.instance().getPublishedTracks();
-        data = Model.instance().getAllTracks();
-        RecyclerView list = view.findViewById(R.id.tracklistfrag_list);
+        data = ModelPosts.instance().getAllPosts();
+        RecyclerView list = view.findViewById(R.id.postlistfrag_list);
         list.setHasFixedSize(true);
 
         list.setLayoutManager(new LinearLayoutManager(getContext()));
-        TrackRecyclerAdapter adapter = new TrackRecyclerAdapter(getLayoutInflater(),data);
+        PostRecyclerAdapter adapter = new PostRecyclerAdapter(getLayoutInflater(),data);
         list.setAdapter(adapter);
 
-        adapter.setOnItemClickListener(new TrackRecyclerAdapter.OnItemClickListener() {
+        adapter.setOnItemClickListener(new PostRecyclerAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(int pos) {
                 Log.d("TAG", "Row was clicked " + pos);
-                Track st = data.get(pos);
+                Post post = data.get(pos);
        //          TracksListFragmentDirections.ActionTracksListFragmentToBlueFragment action = TracksListFragmentDirections.actionTracksListFragmentToBlueFragment(st.name);
        //         Navigation.findNavController(view).navigate(action);
             }

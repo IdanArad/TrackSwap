@@ -8,16 +8,16 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.trackswap.model.Track;
+import com.example.trackswap.model.Post;
 
 import java.util.List;
 
 
-class TrackViewHolder extends RecyclerView.ViewHolder{
+class PostViewHolder extends RecyclerView.ViewHolder{
     TextView nameTv;
     TextView idTv;
-    List<Track> data;
-    public TrackViewHolder(@NonNull View itemView, TrackRecyclerAdapter.OnItemClickListener listener, List<Track> data) {
+    List<Post> data;
+    public PostViewHolder(@NonNull View itemView, PostRecyclerAdapter.OnItemClickListener listener, List<Post> data) {
         super(itemView);
         this.data = data;
         nameTv = itemView.findViewById(R.id.tracklistrow_name_tv);
@@ -32,21 +32,21 @@ class TrackViewHolder extends RecyclerView.ViewHolder{
         });
     }
 
-    public void bind(Track track, int pos) {
-        nameTv.setText(track.name);
-        idTv.setText(track.artist);
+    public void bind(Post post, int pos) {
+        nameTv.setText(post.track.name);
+        idTv.setText(post.track.artist);
     }
 }
 
-public class TrackRecyclerAdapter extends RecyclerView.Adapter<TrackViewHolder>{
+public class PostRecyclerAdapter extends RecyclerView.Adapter<PostViewHolder>{
     OnItemClickListener listener;
     public static interface OnItemClickListener{
         void onItemClick(int pos);
     }
 
     LayoutInflater inflater;
-    List<Track> data;
-    public TrackRecyclerAdapter(LayoutInflater inflater, List<Track> data){
+    List<Post> data;
+    public PostRecyclerAdapter(LayoutInflater inflater, List<Post> data){
         this.inflater = inflater;
         this.data = data;
     }
@@ -56,15 +56,15 @@ public class TrackRecyclerAdapter extends RecyclerView.Adapter<TrackViewHolder>{
     }
     @NonNull
     @Override
-    public TrackViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public PostViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = inflater.inflate(R.layout.track_list_row,parent,false);
-        return new TrackViewHolder(view,listener, data);
+        return new PostViewHolder(view,listener, data);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull TrackViewHolder holder, int position) {
-        Track track = data.get(position);
-        holder.bind(track,position);
+    public void onBindViewHolder(@NonNull PostViewHolder holder, int position) {
+        Post post = data.get(position);
+        holder.bind(post,position);
     }
 
     @Override
