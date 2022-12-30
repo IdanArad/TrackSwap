@@ -7,6 +7,8 @@ import androidx.core.view.MenuProvider;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.Lifecycle;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.util.Log;
 import android.view.Menu;
@@ -41,12 +43,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import retrofit2.Retrofit;
-
 public class AddPostFragment extends Fragment {
     private static final String TAG = "AddPostFragment";
     private static final String API_KEY = "10110a7d3dde85354cb9b949bb84bef6";
-    private Retrofit retrofit;
     List<Track> data;
 
     @Override
@@ -70,23 +69,25 @@ public class AddPostFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
+   //     ModelTracks.instance().clearSongs();
         View view = inflater.inflate(R.layout.fragment_add_post, container, false);
-
         SearchView nameSv = view.findViewById(R.id.search_view);
+
+
 
         nameSv.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                // Make a network request to the LastFM API to search for songs by song name or artist
+                ModelTracks.instance().clearSongs();
                 searchSongs(query);
-                View view = inflater.inflate(R.layout.fragment_posts_list, container, false);
-            //    data = ModelTracks.instance().getAllSongs();
-            //    RecyclerView list = view.findViewById(R.id.songs_frag_list);
-            //    list.setHasFixedSize(true);
-
-            //    list.setLayoutManager(new LinearLayoutManager(getContext()));
-             //   PostRecyclerAdapter adapter = new PostRecyclerAdapter(getLayoutInflater(),data);
-             //   list.setAdapter(adapter);
+                View trackview = inflater.inflate(R.layout.fragment_tracks_list, container, false);
+                RecyclerView list = trackview.findViewById(R.id.tracklistfrag_list);
+                list.setHasFixedSize(true);
+                list.setLayoutManager(new LinearLayoutManager(getContext()));
+                data = ModelTracks.instance().getAllSongs();
+                TrackRecyclerAdapter adapter = new TrackRecyclerAdapter(getLayoutInflater(),data);
+                list.setAdapter(adapter);
+                adapter.setData(data);
                 return true;
             }
 
@@ -171,13 +172,9 @@ public class AddPostFragment extends Fragment {
                         Log.d(TAG, "Got Tracks!: " + tracks.toString());
                         JSONObject currentTrackJson;
                         Track newTrack;
-                        String trackArtist;
-                        String trackName;
                         for (int i=0; i < tracks.length(); i++) {
                             currentTrackJson = tracks.getJSONObject(i);
-                            trackName = currentTrackJson.getString("name");
-                            trackArtist = currentTrackJson.getString("name");
-                            newTrack = new Track(trackName, trackArtist);
+                            newTrack = new Track(currentTrackJson.getString("name"),  currentTrackJson.getString("artist"));
                             if (!ModelTracks.instance().isExist(newTrack)) {
                                 ModelTracks.instance().addTrack(newTrack);
                             }
