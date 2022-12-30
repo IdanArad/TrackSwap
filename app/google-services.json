@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "657086623297",
+    "project_id": "trackswap-805a2",
+    "storage_bucket": "trackswap-805a2.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:657086623297:android:7852f7ccef78db245ea0c0",
+        "android_client_info": {
+          "package_name": "com.example.trackswap"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "657086623297-nk9tsbval85mfon2c9n6hrf3khj0l3lk.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAr59eycmQ0HPbHgSpiLK53qIu4uc9Wmvw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "657086623297-nk9tsbval85mfon2c9n6hrf3khj0l3lk.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
