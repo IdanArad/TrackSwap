@@ -3,6 +3,7 @@ package com.example.trackswap;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -15,26 +16,25 @@ import java.util.List;
 
 class TrackViewHolder extends RecyclerView.ViewHolder{
     TextView nameTv;
-    TextView idTv;
-    List<Track> data;
-    public TrackViewHolder(@NonNull View itemView, TrackRecyclerAdapter.OnItemClickListener listener, List<Track> data) {
+    TextView artistTv;
+    public TrackViewHolder(@NonNull View itemView, TrackRecyclerAdapter.OnItemClickListener listener) {
         super(itemView);
-        this.data = data;
         nameTv = itemView.findViewById(R.id.tracklistrow_name_tv);
-        idTv = itemView.findViewById(R.id.tracklistrow_id_tv);
+        artistTv = itemView.findViewById(R.id.tracklistrow_id_tv);
 
         itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 int pos = getAdapterPosition();
                 listener.onItemClick(pos);
+                // TODO: Send view track data to Next Button in order to add post. figure out why listener is null.
             }
         });
     }
 
     public void bind(Track track, int pos) {
         nameTv.setText(track.name);
-        idTv.setText(track.artist);
+        artistTv.setText(track.artist);
     }
 }
 
@@ -46,7 +46,7 @@ public class TrackRecyclerAdapter extends RecyclerView.Adapter<TrackViewHolder>{
 
     LayoutInflater inflater;
     List<Track> data;
-    public TrackRecyclerAdapter(LayoutInflater inflater, List<Track> data){
+    public TrackRecyclerAdapter(LayoutInflater inflater, List<Track> data) {
         this.inflater = inflater;
         this.data = data;
     }
@@ -58,7 +58,7 @@ public class TrackRecyclerAdapter extends RecyclerView.Adapter<TrackViewHolder>{
     @Override
     public TrackViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = inflater.inflate(R.layout.track_list_row,parent,false);
-        return new TrackViewHolder(view,listener, data);
+        return new TrackViewHolder(view,listener);
     }
 
     @Override

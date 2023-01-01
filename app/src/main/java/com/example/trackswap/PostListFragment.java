@@ -91,8 +91,7 @@ public class PostListFragment extends Fragment {
                                 JSONObject jsonObject = new JSONObject(document.getData());
                                 try {
                                     Track currentTrack = new Track(jsonObject.getString("name"), jsonObject.getString("artist"));
-                                    Post currentPost = new Post(currentTrack,jsonObject.getString("publisher_uid"));
-                                    jsonObject.getString("artist");
+                                    Post currentPost = new Post(currentTrack,jsonObject.getString("publisher_uid"), jsonObject.getString("desc"));
                                     if (!ModelPosts.instance().isExist(currentPost)) {
                                         ModelPosts.instance().addPost(currentPost);
                                     }

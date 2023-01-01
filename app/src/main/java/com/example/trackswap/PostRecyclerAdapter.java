@@ -17,13 +17,11 @@ import java.util.List;
 
 class PostViewHolder extends RecyclerView.ViewHolder{
     TextView nameTv;
-    TextView idTv;
-    List<Post> data;
-    public PostViewHolder(@NonNull View itemView, PostRecyclerAdapter.OnItemClickListener listener, List<Post> data) {
+    TextView artistTv;
+    public PostViewHolder(@NonNull View itemView, PostRecyclerAdapter.OnItemClickListener listener) {
         super(itemView);
-        this.data = data;
         nameTv = itemView.findViewById(R.id.tracklistrow_name_tv);
-        idTv = itemView.findViewById(R.id.tracklistrow_id_tv);
+        artistTv = itemView.findViewById(R.id.tracklistrow_id_tv);
 
         itemView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -36,7 +34,7 @@ class PostViewHolder extends RecyclerView.ViewHolder{
 
     public void bind(Post post, int pos) {
         nameTv.setText(post.track.name);
-        idTv.setText(post.track.artist);
+        artistTv.setText(post.track.artist);
     }
 }
 
@@ -60,7 +58,7 @@ public class PostRecyclerAdapter extends RecyclerView.Adapter<PostViewHolder>{
     @Override
     public PostViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = inflater.inflate(R.layout.track_list_row,parent,false);
-        return new PostViewHolder(view,listener, data);
+        return new PostViewHolder(view,listener);
     }
 
     @Override
