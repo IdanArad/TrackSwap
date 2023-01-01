@@ -123,6 +123,7 @@ public class AddPostFragment extends Fragment {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     m_Text = input.getText().toString();
+                    // TODO: retrieve data for selected view (name, artist)
                     addPost("NAME","ARTIST", m_Text);
                 }
             });
