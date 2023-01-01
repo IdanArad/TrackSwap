@@ -1,4 +1,7 @@
 package com.example.trackswap;
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -6,8 +9,13 @@ import androidx.annotation.Nullable;
 import androidx.core.view.MenuProvider;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.Lifecycle;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
+import android.text.InputType;
 import android.util.Log;
 import android.view.Menu;
 import android.view.LayoutInflater;
@@ -16,6 +24,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.SearchView;
 import android.widget.Toast;
 
@@ -41,12 +50,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import retrofit2.Retrofit;
-
 public class AddPostFragment extends Fragment {
     private static final String TAG = "AddPostFragment";
     private static final String API_KEY = "10110a7d3dde85354cb9b949bb84bef6";
-    private Retrofit retrofit;
+    private String m_Text = "";
     List<Track> data;
 
     @Override
@@ -70,29 +77,30 @@ public class AddPostFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
+   //     ModelTracks.instance().clearSongs();
         View view = inflater.inflate(R.layout.fragment_add_post, container, false);
-
         SearchView nameSv = view.findViewById(R.id.search_view);
 
         nameSv.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                // Make a network request to the LastFM API to search for songs by song name or artist
-                searchSongs(query);
-                View view = inflater.inflate(R.layout.fragment_posts_list, container, false);
-            //    data = ModelTracks.instance().getAllSongs();
-            //    RecyclerView list = view.findViewById(R.id.songs_frag_list);
-            //    list.setHasFixedSize(true);
-
-            //    list.setLayoutManager(new LinearLayoutManager(getContext()));
-             //   PostRecyclerAdapter adapter = new PostRecyclerAdapter(getLayoutInflater(),data);
-             //   list.setAdapter(adapter);
+                ModelTracks.instance().clearSongs();
+                try {
+                    searchSongs(query);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                FragmentActivity parentActivity = getActivity();
+                FragmentManager fragmentManager = parentActivity.getSupportFragmentManager();
+                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                TrackListFragment newTrackListFragment = new TrackListFragment();
+                fragmentTransaction.replace(R.id.trackListFragment, newTrackListFragment);
+                fragmentTransaction.commit();
                 return true;
             }
 
             @Override
-            public boolean onQueryTextChange(String newText) {
-                // You can optionally add code here to update the search results as the user types
+            public boolean onQueryTextChange(String query) {
                 return false;
             }
         });
@@ -102,40 +110,68 @@ public class AddPostFragment extends Fragment {
         Button saveBtn = view.findViewById(R.id.addtrack_save_btn);
 
         saveBtn.setOnClickListener(view1 -> {
-            String name = nameSv.toString();
+            AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+            builder.setTitle("Add Description:");
 
-            // Add a new document with a generated id.
-            Map<String, Object> data = new HashMap<>();
-            data.put("name", name);
-            data.put("artist", "TRY");
-            data.put("publisher_uid", FirebaseAuth.getInstance().getCurrentUser().getUid());
+            // Set up the input
+            final EditText input = new EditText(getContext());
+            // Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
+            input.setInputType(InputType.TYPE_CLASS_TEXT);
+            builder.setView(input);
+            // Set up the buttons
+            builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    m_Text = input.getText().toString();
+                    // TODO: retrieve data for selected view (name, artist)
+                    addPost("NAME","ARTIST", m_Text);
+                }
+            });
+            builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.cancel();
+                }
+            });
 
-            Firestore.instance().getDb().collection("published_tracks")
-                    .add(data)
-                    .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-                        @Override
-                        public void onSuccess(DocumentReference documentReference) {
-                            Log.d(TAG, "DocumentSnapshot written with ID: " + documentReference.getId());
-                        }
-                    })
-                    .addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            Log.w(TAG, "Error adding document", e);
-                        }
-                    });
+            builder.show();
 
-          //  ModelPosts.instance().Track(new Track(name,"1"));
-            Toast.makeText(getContext(),
-                            "Publish Successful!",
-                            Toast.LENGTH_LONG)
-                    .show();
+
         });
 
         return view;
     }
 
-    private void searchSongs(String query) {
+    private void addPost(String name, String artist, String desc) {
+        // Add a new document with a generated id.
+        Map<String, Object> data = new HashMap<>();
+        data.put("name", name);
+        data.put("artist", artist);
+        data.put("description", desc);
+        data.put("publisher_uid", FirebaseAuth.getInstance().getCurrentUser().getUid());
+
+        Firestore.instance().getDb().collection("published_tracks")
+                .add(data)
+                .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                    @Override
+                    public void onSuccess(DocumentReference documentReference) {
+                        Log.d(TAG, "DocumentSnapshot written with ID: " + documentReference.getId());
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.w(TAG, "Error adding document", e);
+                    }
+                });
+
+        Toast.makeText(getContext(),
+                        "Publish Successful!",
+                        Toast.LENGTH_LONG)
+                .show();
+    }
+
+    private void searchSongs(String query) throws InterruptedException {
         Thread gfgThread = new Thread(new Runnable() {
             @Override
             public void run() {
@@ -171,13 +207,9 @@ public class AddPostFragment extends Fragment {
                         Log.d(TAG, "Got Tracks!: " + tracks.toString());
                         JSONObject currentTrackJson;
                         Track newTrack;
-                        String trackArtist;
-                        String trackName;
                         for (int i=0; i < tracks.length(); i++) {
                             currentTrackJson = tracks.getJSONObject(i);
-                            trackName = currentTrackJson.getString("name");
-                            trackArtist = currentTrackJson.getString("name");
-                            newTrack = new Track(trackName, trackArtist);
+                            newTrack = new Track(currentTrackJson.getString("name"),  currentTrackJson.getString("artist"));
                             if (!ModelTracks.instance().isExist(newTrack)) {
                                 ModelTracks.instance().addTrack(newTrack);
                             }
@@ -201,6 +233,7 @@ public class AddPostFragment extends Fragment {
         });
 
         gfgThread.start();
+        gfgThread.join();
     }
 
 }

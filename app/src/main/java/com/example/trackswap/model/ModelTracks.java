@@ -17,7 +17,9 @@ public class ModelTracks {
     public List<Track> getAllSongs(){
         return data;
     }
-
+    public void clearSongs(){
+        data = new LinkedList<>();
+    }
 
     public boolean isExist(Track track) {
             for (int i = 0; i < data.size(); i++) {
