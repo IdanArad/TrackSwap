@@ -6,9 +6,11 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.lifecycle.LiveData;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.trackswap.model.Post;
+import com.example.trackswap.model.Track;
 
 import java.util.List;
 
@@ -70,6 +72,12 @@ public class PostRecyclerAdapter extends RecyclerView.Adapter<PostViewHolder>{
     @Override
     public int getItemCount() {
         return data.size();
+    }
+
+    public void setData(List<Post> data) {
+        this.data.clear();
+        this.data.addAll(data);
+        notifyDataSetChanged();
     }
 
 }

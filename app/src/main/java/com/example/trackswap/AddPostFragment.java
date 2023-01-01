@@ -6,6 +6,8 @@ import androidx.annotation.Nullable;
 import androidx.core.view.MenuProvider;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.Lifecycle;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -73,27 +75,26 @@ public class AddPostFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_add_post, container, false);
         SearchView nameSv = view.findViewById(R.id.search_view);
 
-
-
         nameSv.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
                 ModelTracks.instance().clearSongs();
-                searchSongs(query);
-                View trackview = inflater.inflate(R.layout.fragment_tracks_list, container, false);
-                RecyclerView list = trackview.findViewById(R.id.tracklistfrag_list);
-                list.setHasFixedSize(true);
-                list.setLayoutManager(new LinearLayoutManager(getContext()));
-                data = ModelTracks.instance().getAllSongs();
-                TrackRecyclerAdapter adapter = new TrackRecyclerAdapter(getLayoutInflater(),data);
-                list.setAdapter(adapter);
-                adapter.setData(data);
+                try {
+                    searchSongs(query);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                FragmentActivity parentActivity = getActivity();
+                FragmentManager fragmentManager = parentActivity.getSupportFragmentManager();
+                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                TrackListFragment newTrackListFragment = new TrackListFragment();
+                fragmentTransaction.replace(R.id.trackListFragment, newTrackListFragment);
+                fragmentTransaction.commit();
                 return true;
             }
 
             @Override
-            public boolean onQueryTextChange(String newText) {
-                // You can optionally add code here to update the search results as the user types
+            public boolean onQueryTextChange(String query) {
                 return false;
             }
         });
@@ -136,7 +137,7 @@ public class AddPostFragment extends Fragment {
         return view;
     }
 
-    private void searchSongs(String query) {
+    private void searchSongs(String query) throws InterruptedException {
         Thread gfgThread = new Thread(new Runnable() {
             @Override
             public void run() {
@@ -198,6 +199,7 @@ public class AddPostFragment extends Fragment {
         });
 
         gfgThread.start();
+        gfgThread.join();
     }
 
 }

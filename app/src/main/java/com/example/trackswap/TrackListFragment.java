@@ -1,7 +1,6 @@
 package com.example.trackswap;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,6 +15,12 @@ import java.util.List;
 
 public class TrackListFragment extends Fragment {
     List<Track> data;
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        data = ModelTracks.instance().getAllSongs();
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
