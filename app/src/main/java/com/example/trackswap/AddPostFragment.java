@@ -59,6 +59,7 @@ public class AddPostFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        ModelTracks.instance().clearSongs();
         FragmentActivity parentActivity = getActivity();
         parentActivity.addMenuProvider(new MenuProvider() {
             @Override
@@ -123,8 +124,10 @@ public class AddPostFragment extends Fragment {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     m_Text = input.getText().toString();
+                    String artist = AddPostAction.instance().getArtist();
+                    String name = AddPostAction.instance().getName();
                     // TODO: retrieve data for selected view (name, artist)
-                    addPost("NAME","ARTIST", m_Text);
+                    addPost(name,artist, m_Text);
                 }
             });
             builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -147,7 +150,7 @@ public class AddPostFragment extends Fragment {
         Map<String, Object> data = new HashMap<>();
         data.put("name", name);
         data.put("artist", artist);
-        data.put("description", desc);
+        data.put("desc", desc);
         data.put("publisher_uid", FirebaseAuth.getInstance().getCurrentUser().getUid());
 
         Firestore.instance().getDb().collection("published_tracks")

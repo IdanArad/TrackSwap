@@ -11,4 +11,8 @@
         android:id="@+id/profileFragment"
         android:title="PROFILE"
         app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/logout"
+        android:title="logout"
+        app:showAsAction="always" />
 </menu>
