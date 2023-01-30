@@ -17,7 +17,14 @@
         android:id="@+id/addPostFragment"
         android:name="com.example.trackswap.AddPostFragment"
         android:label="Add Track"
-        tools:layout="@layout/fragment_add_post" />
+        tools:layout="@layout/fragment_add_post"
+        android:tag="addPostFragment">
+        <action
+            android:id="@+id/action_addPostFragment_pop"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popUpTo="@id/addPostFragment"
+            app:popUpToInclusive="true" />
+    </fragment>
     <action android:id="@+id/action_global_addPostFragment" app:destination="@id/addPostFragment" />
     <fragment
         android:id="@+id/profileFragment"

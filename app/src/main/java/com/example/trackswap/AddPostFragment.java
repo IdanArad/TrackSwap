@@ -1,4 +1,5 @@
 package com.example.trackswap;
+
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -30,6 +31,7 @@ import android.widget.Toast;
 
 import com.example.trackswap.model.Firestore;
 import com.example.trackswap.model.ModelTracks;
+import com.example.trackswap.model.Post;
 import com.example.trackswap.model.Track;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -71,14 +73,14 @@ public class AddPostFragment extends Fragment {
             public boolean onMenuItemSelected(@NonNull MenuItem menuItem) {
                 return false;
             }
-        },this, Lifecycle.State.RESUMED);
+        }, this, Lifecycle.State.RESUMED);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-   //     ModelTracks.instance().clearSongs();
+        //     ModelTracks.instance().clearSongs();
         View view = inflater.inflate(R.layout.fragment_add_post, container, false);
         SearchView nameSv = view.findViewById(R.id.search_view);
 
@@ -127,7 +129,13 @@ public class AddPostFragment extends Fragment {
                     String artist = AddPostAction.instance().getArtist();
                     String name = AddPostAction.instance().getName();
                     // TODO: retrieve data for selected view (name, artist)
-                    addPost(name,artist, m_Text);
+                    Post.addPost(name, artist, m_Text);
+                    Toast.makeText(getContext(),
+                                    "Publish Successful!",
+                                    Toast.LENGTH_LONG)
+                            .show();
+                    Fragment parentFragment = (Fragment) AddPostFragment.this.getParentFragment();
+                    getActivity().getSupportFragmentManager().popBackStack();
                 }
             });
             builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -145,40 +153,12 @@ public class AddPostFragment extends Fragment {
         return view;
     }
 
-    private void addPost(String name, String artist, String desc) {
-        // Add a new document with a generated id.
-        Map<String, Object> data = new HashMap<>();
-        data.put("name", name);
-        data.put("artist", artist);
-        data.put("desc", desc);
-        data.put("publisher_uid", FirebaseAuth.getInstance().getCurrentUser().getUid());
-
-        Firestore.instance().getDb().collection("published_tracks")
-                .add(data)
-                .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-                    @Override
-                    public void onSuccess(DocumentReference documentReference) {
-                        Log.d(TAG, "DocumentSnapshot written with ID: " + documentReference.getId());
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.w(TAG, "Error adding document", e);
-                    }
-                });
-
-        Toast.makeText(getContext(),
-                        "Publish Successful!",
-                        Toast.LENGTH_LONG)
-                .show();
-    }
 
     private void searchSongs(String query) throws InterruptedException {
         Thread gfgThread = new Thread(new Runnable() {
             @Override
             public void run() {
-                try  {
+                try {
                     String baseUrl = "https://ws.audioscrobbler.com/2.0/";
                     String method = "track.search";
                     String track = query;
@@ -210,9 +190,9 @@ public class AddPostFragment extends Fragment {
                         Log.d(TAG, "Got Tracks!: " + tracks.toString());
                         JSONObject currentTrackJson;
                         Track newTrack;
-                        for (int i=0; i < tracks.length(); i++) {
+                        for (int i = 0; i < tracks.length(); i++) {
                             currentTrackJson = tracks.getJSONObject(i);
-                            newTrack = new Track(currentTrackJson.getString("name"),  currentTrackJson.getString("artist"));
+                            newTrack = new Track(currentTrackJson.getString("name"), currentTrackJson.getString("artist"));
                             if (!ModelTracks.instance().isExist(newTrack)) {
                                 ModelTracks.instance().addTrack(newTrack);
                             }

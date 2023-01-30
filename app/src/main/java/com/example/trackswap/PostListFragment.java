@@ -39,13 +39,14 @@ public class PostListFragment extends Fragment {
     List<Post> data;
     PostRecyclerAdapter adapter;
 
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         data = ModelPosts.instance().getAllPosts();
     }
 
-    @Override
+      @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
@@ -68,7 +69,6 @@ public class PostListFragment extends Fragment {
             }
         });
 
-       // View addButton = view.findViewById(R.id.tracklistfrag_add_btn);
       //  NavDirections action = TracksListFragmentDirections.actionGlobalAddTrackFragment();
        // addButton.setOnClickListener(Navigation.createNavigateOnClickListener(action));
         return view;

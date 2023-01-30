@@ -27,7 +27,7 @@ import java.net.URL;
 public class Firestore {
     private static FirebaseFirestore db = FirebaseFirestore.getInstance();
     private static final Firestore _instance = new Firestore(db);
-    private static final String TAG = "Firestore";
+    public static final String TAG = "Firestore";
 
     public static Firestore instance(){
         return _instance;
