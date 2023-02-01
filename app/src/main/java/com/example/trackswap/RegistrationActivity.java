@@ -1,9 +1,15 @@
 package com.example.trackswap;
 
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.content.Intent;
+import android.renderscript.ScriptGroup;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -15,10 +21,16 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Button;
 
+import com.example.trackswap.model.Firestore;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.AuthResult;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class RegistrationActivity extends AppCompatActivity {
 
@@ -26,6 +38,7 @@ public class RegistrationActivity extends AppCompatActivity {
     private Button Btn;
     private ProgressBar progressbar;
     private FirebaseAuth mAuth;
+    ActivityResultLauncher<Void> cameraAppLauncher;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -89,6 +102,25 @@ public class RegistrationActivity extends AppCompatActivity {
                     public void onComplete(@NonNull Task<AuthResult> task)
                     {
                         if (task.isSuccessful()) {
+                            // Add a new document with a generated id.
+                            Map<String, Object> data = new HashMap<>();
+                            data.put("username", email);
+                            data.put("password", password);
+                            data.put("uid", FirebaseAuth.getInstance().getCurrentUser().getUid());
+
+                            Firestore.instance().getDb().collection("users").document(FirebaseAuth.getInstance().getCurrentUser().getUid()).set(data)
+                                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                        @Override
+                                        public void onSuccess(Void aVoid) {
+                                            Log.d("TAG", "Document has been added with custom ID");
+                                        }
+                                    })
+                                    .addOnFailureListener(new OnFailureListener() {
+                                        @Override
+                                        public void onFailure(@NonNull Exception e) {
+                                            Log.w("TAG", "Error adding document", e);
+                                        }
+                                    });
                             Toast.makeText(getApplicationContext(),
                                             "Registration successful!",
                                             Toast.LENGTH_LONG)
