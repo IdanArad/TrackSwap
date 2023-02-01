@@ -105,7 +105,7 @@ public class RegistrationActivity extends AppCompatActivity {
                         if (task.isSuccessful()) {
                             // Add a new document with a generated id.
                             Map<String, Object> data = new HashMap<>();
-                            data.put("username", email.split("@")[0]);
+                            data.put("displayname", email.split("@")[0]);
                             data.put("password", password);
                             data.put("uid", FirebaseAuth.getInstance().getCurrentUser().getUid());
 

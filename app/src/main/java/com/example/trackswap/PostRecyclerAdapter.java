@@ -3,6 +3,7 @@ package com.example.trackswap;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.text.InputType;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,10 +15,17 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.trackswap.model.Firestore;
 import com.example.trackswap.model.ModelPosts;
 import com.example.trackswap.model.Post;
 import com.example.trackswap.model.Track;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 
 import java.util.List;
 
@@ -26,13 +34,16 @@ class PostViewHolder extends RecyclerView.ViewHolder {
     TextView nameTv;
     TextView artistTv;
     TextView descTv;
+    TextView publisherTv;
     Button editButton;
 
     public PostViewHolder(@NonNull View itemView, PostRecyclerAdapter.OnItemClickListener listener) {
         super(itemView);
         nameTv = itemView.findViewById(R.id.tracklistrow_name_tv);
         artistTv = itemView.findViewById(R.id.tracklistrow_id_tv);
+        publisherTv = itemView.findViewById(R.id.publisher_name_tv);
         descTv = itemView.findViewById(R.id.tracklistrow_desc_tv);
+
         editButton = itemView.findViewById(R.id.edit_button);
 
         itemView.setOnClickListener(new View.OnClickListener() {
@@ -80,6 +91,26 @@ class PostViewHolder extends RecyclerView.ViewHolder {
         nameTv.setText(post.track.name);
         artistTv.setText(post.track.artist);
         descTv.setText(post.desc);
+        DocumentReference docRef = Firestore.instance().getDb().collection("users").document(post.getPublisher_uid());
+        docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                if (documentSnapshot.exists()) {
+                    String fieldValue = documentSnapshot.getString("displayname");
+                    publisherTv.setText(fieldValue);
+                } else {
+                    Log.d("TAG", "Document does not exist");
+                    publisherTv.setText("No User");
+                }
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Log.w("TAG", "Error getting document", e);
+                publisherTv.setText("No User");
+            }
+        });
+
         if (post.getPublisher_uid().equals(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
             editButton.setVisibility(View.VISIBLE);
         } else {
