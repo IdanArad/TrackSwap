@@ -128,8 +128,9 @@ public class AddPostFragment extends Fragment {
                     m_Text = input.getText().toString();
                     String artist = AddPostAction.instance().getArtist();
                     String name = AddPostAction.instance().getName();
-                    // TODO: retrieve data for selected view (name, artist)
-                    Post.addPost(name, artist, m_Text);
+                    DocumentReference ref = Firestore.instance().getDb().collection("published_tracks").document();
+                    String newId = ref.getId();
+                    Post.addPost(name, artist, m_Text, newId);
                     Toast.makeText(getContext(),
                                     "Publish Successful!",
                                     Toast.LENGTH_LONG)
