@@ -1,9 +1,10 @@
 package com.example.trackswap.model;
 
 import android.util.Log;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -12,19 +13,24 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.Query;
 
+import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
-public class Post {
+public class Post implements Comparable{
     public String id;
     public String publisher_uid;
     public Track track;
     public String desc;
+    public Date timestamp;
 
-    public Post(Track track, String publisher_uid, String desc, String id) {
+    public Post(Track track, String publisher_uid, String desc, String id, Date timestamp) {
         this.track = track;
         this.publisher_uid = publisher_uid;
         this.desc = desc;
+        this.id = id;
+        this.timestamp = timestamp;
     }
 
     public String getId() {
@@ -42,6 +48,7 @@ public class Post {
         data.put("artist", artist);
         data.put("desc", desc);
         data.put("publisher_uid", FirebaseAuth.getInstance().getCurrentUser().getUid());
+        data.put("timestamp", new Date());
 
         Firestore.instance().getDb().collection("published_tracks").document(id).set(data)
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
@@ -58,27 +65,9 @@ public class Post {
                 });
     }
 
-    public static void editPost(String newDesc, Post post) {
-        Map<String, Object> data = new HashMap<>();
-        data.put("name", post.track.name);
-        data.put("artist", post.track.artist);
-        data.put("desc", newDesc);
-        data.put("publisher_uid", post.getPublisher_uid());
-        DocumentReference docRef = Firestore.instance().getDb().collection("published_tracks").document(post.getId());
 
-        docRef.update(data)
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                        Log.d("TAG", "Document update successful");
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.w("TAG", "Error updating document", e);
-                    }
-                });
+    @Override
+    public int compareTo(Object o) {
+        return ((Post) o).timestamp.compareTo(this.timestamp);
     }
-
 }
