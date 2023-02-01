@@ -30,6 +30,18 @@ public class ModelPosts {
         return myposts;
     }
 
+    public void editPost(String newDesc, Post post) {
+        boolean found = false;
+        for (Post currentpost : data) {
+            if (currentpost.track.name.equals(post.track.name) &&
+                    currentpost.track.artist.equals(post.track.artist) &&
+                    currentpost.publisher_uid.equals(post.publisher_uid)) {
+                currentpost.editPost(newDesc, post);
+                found = true;
+                break;
+            }
+        }
+    }
 
     public boolean isExist(Post post) {
             for (int i = 0; i < data.size(); i++) {

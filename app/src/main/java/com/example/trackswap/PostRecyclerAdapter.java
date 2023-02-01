@@ -14,8 +14,10 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.trackswap.model.ModelPosts;
 import com.example.trackswap.model.Post;
 import com.example.trackswap.model.Track;
+import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.List;
 
@@ -58,9 +60,7 @@ class PostViewHolder extends RecyclerView.ViewHolder {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         String m_Text = input.getText().toString();
-                        String artist = AddPostAction.instance().getArtist();
-                        String name = AddPostAction.instance().getName();
-
+                        // TODO: Edit Post
                     }
                 });
                 builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -80,6 +80,11 @@ class PostViewHolder extends RecyclerView.ViewHolder {
         nameTv.setText(post.track.name);
         artistTv.setText(post.track.artist);
         descTv.setText(post.desc);
+        if (post.getPublisher_uid().equals(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
+            editButton.setVisibility(View.VISIBLE);
+        } else {
+            editButton.setVisibility(View.GONE);
+        }
     }
 }
 
@@ -105,7 +110,7 @@ public class PostRecyclerAdapter extends RecyclerView.Adapter<PostViewHolder> {
     @NonNull
     @Override
     public PostViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = inflater.inflate(R.layout.track_list_row, parent, false);
+        View view = inflater.inflate(R.layout.post_list_row, parent, false);
         return new PostViewHolder(view, listener);
     }
 
@@ -124,6 +129,10 @@ public class PostRecyclerAdapter extends RecyclerView.Adapter<PostViewHolder> {
         this.data.clear();
         this.data.addAll(data);
         notifyDataSetChanged();
+    }
+
+    public Post getItem(int position) {
+        return data.get(position);
     }
 
 }
