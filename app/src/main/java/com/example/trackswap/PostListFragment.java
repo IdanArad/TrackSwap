@@ -7,11 +7,13 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
+
 import com.example.trackswap.model.Firestore;
 import com.example.trackswap.model.Post;
 import com.example.trackswap.model.ModelPosts;
@@ -61,6 +63,7 @@ public class PostListFragment extends Fragment {
 
                     }
                     data = fetchedPosts;
+                    ModelPosts.instance().setPosts(fetchedPosts);
                     progressbar.setVisibility(View.GONE);
                     RecyclerView list = view.findViewById(R.id.postlistfrag_list);
                     list.setHasFixedSize(true);
@@ -78,7 +81,6 @@ public class PostListFragment extends Fragment {
                     Log.d(Firestore.TAG, "Error getting documents: ", task.getException());
                 }
             }
-
         });
 
         return view;

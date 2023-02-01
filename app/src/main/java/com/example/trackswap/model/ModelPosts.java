@@ -43,6 +43,10 @@ public class ModelPosts {
             return false;
     }
 
+    public void setPosts(List<Post> posts) {
+        data = posts;
+    }
+
     public void addPost(Post post){
         data.add(post);
     }
