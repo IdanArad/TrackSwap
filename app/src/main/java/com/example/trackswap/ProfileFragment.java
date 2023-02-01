@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.example.trackswap.model.Firestore;
 import com.example.trackswap.model.ModelPosts;
@@ -33,6 +34,9 @@ public class ProfileFragment extends Fragment {
         data = ModelPosts.instance().getMyPosts(FirebaseAuth.getInstance().getCurrentUser().getUid(), viewModel.getData().getValue());
         RecyclerView list = view.findViewById(R.id.tracklistfrag_list);
         list.setHasFixedSize(true);
+
+        TextView textName = view.findViewById(R.id.name_profile_id);
+        textName.setText(FirebaseAuth.getInstance().getCurrentUser().getDisplayName());
 
         list.setLayoutManager(new LinearLayoutManager(getContext()));
         PostRecyclerAdapter adapter = new PostRecyclerAdapter(getLayoutInflater(),data);
