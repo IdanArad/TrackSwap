@@ -8,22 +8,27 @@ import androidx.lifecycle.MutableLiveData;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+
 public class ModelPosts {
     private static final ModelPosts _instance = new ModelPosts();
     final MutableLiveData<List<Post>> data = new
             MutableLiveData<>();
 
 
-    public static ModelPosts instance(){
+    public static ModelPosts instance() {
         return _instance;
     }
 
@@ -53,7 +58,7 @@ public class ModelPosts {
 //        data.add(post);
 //    }
 
-    class PostListData extends MutableLiveData<List<Post>>{
+    class PostListData extends MutableLiveData<List<Post>> {
         @Override
         protected void onActive() {
             super.onActive();
@@ -65,24 +70,28 @@ public class ModelPosts {
                         Log.d(Firestore.TAG, document.getId() + " => " + document.getData());
                         JSONObject jsonObject = new JSONObject(document.getData());
                         try {
+                            Timestamp timestamp = document.getTimestamp("timestamp");
                             Track currentTrack = new Track(jsonObject.getString("name"), jsonObject.getString("artist"));
-                            Post currentPost = new Post(currentTrack, jsonObject.getString("publisher_uid"), jsonObject.getString("desc"), document.getId());
+                            Post currentPost = new Post(currentTrack, jsonObject.getString("publisher_uid"), jsonObject.getString("desc"), document.getId(), timestamp.toDate());
                             fetchedPosts.add(currentPost);
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
 
                     }
+                    Collections.sort(fetchedPosts);
                     setValue(fetchedPosts);
                 }
             });
         }
+
         @Override
         protected void onInactive() {
             super.onInactive();
 //            modelFirebase.cancellGetAllPosts();
-            Log.d("TAG","cancellGetAllPosts");
+            Log.d("TAG", "cancellGetAllPosts");
         }
+
         public PostListData() {
             super();
             setValue(new LinkedList<Post>());
@@ -90,7 +99,8 @@ public class ModelPosts {
     }
 
     PostListData postListData = new PostListData();
-    public LiveData<List<Post>> getAllPosts(){
+
+    public LiveData<List<Post>> getAllPosts() {
         return postListData;
     }
 

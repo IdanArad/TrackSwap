@@ -14,10 +14,14 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.trackswap.model.Firestore;
 import com.example.trackswap.model.ModelPosts;
 import com.example.trackswap.model.Post;
 import com.example.trackswap.model.Track;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.List;
 
@@ -27,6 +31,7 @@ class PostViewHolder extends RecyclerView.ViewHolder {
     TextView artistTv;
     TextView descTv;
     Button editButton;
+    String postId;
 
     public PostViewHolder(@NonNull View itemView, PostRecyclerAdapter.OnItemClickListener listener) {
         super(itemView);
@@ -60,7 +65,12 @@ class PostViewHolder extends RecyclerView.ViewHolder {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         String m_Text = input.getText().toString();
-                        // TODO: Edit Post
+                        Firestore.editPost(postId, m_Text, new OnCompleteListener<QuerySnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                System.out.println("nadav");
+                            }
+                        });
                     }
                 });
                 builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -86,6 +96,10 @@ class PostViewHolder extends RecyclerView.ViewHolder {
             editButton.setVisibility(View.GONE);
         }
     }
+
+    public void setId(String id) {
+        this.postId = id;
+    }
 }
 
 public class PostRecyclerAdapter extends RecyclerView.Adapter<PostViewHolder> {
@@ -109,7 +123,7 @@ public class PostRecyclerAdapter extends RecyclerView.Adapter<PostViewHolder> {
 
     @NonNull
     @Override
-    public PostViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public PostViewHolder onCreateViewHolder(@NonNull ViewGroup parent, final int position) {
         View view = inflater.inflate(R.layout.post_list_row, parent, false);
         return new PostViewHolder(view, listener);
     }
@@ -118,6 +132,7 @@ public class PostRecyclerAdapter extends RecyclerView.Adapter<PostViewHolder> {
     public void onBindViewHolder(@NonNull PostViewHolder holder, int position) {
         Post post = data.get(position);
         holder.bind(post, position);
+        holder.setId(data.get(position).id);
     }
 
     @Override

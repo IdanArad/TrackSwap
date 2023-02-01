@@ -18,6 +18,7 @@ import android.widget.ProgressBar;
 import com.example.trackswap.model.Post;
 import com.example.trackswap.viewmodels.PostsListViewModel;
 import com.google.firebase.firestore.FirebaseFirestore;
+
 import java.util.List;
 
 public class PostListFragment extends Fragment {
