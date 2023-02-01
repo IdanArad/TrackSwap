@@ -16,20 +16,22 @@ import android.widget.TextView;
 import com.example.trackswap.model.Firestore;
 import com.example.trackswap.model.ModelPosts;
 import com.example.trackswap.model.Post;
+import com.example.trackswap.viewmodels.PostsListViewModel;
 import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.List;
 
 public class ProfileFragment extends Fragment {
     List<Post> data;
+    PostsListViewModel viewModel = new PostsListViewModel();
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_profile, container, false);
-        Firestore.instance().getPublishedTracks();
-        data = ModelPosts.instance().getMyPosts(FirebaseAuth.getInstance().getCurrentUser().getUid());
+//        Firestore.instance().fetchPosts();
+        data = ModelPosts.instance().getMyPosts(FirebaseAuth.getInstance().getCurrentUser().getUid(), viewModel.getData().getValue());
         RecyclerView list = view.findViewById(R.id.tracklistfrag_list);
         list.setHasFixedSize(true);
 
