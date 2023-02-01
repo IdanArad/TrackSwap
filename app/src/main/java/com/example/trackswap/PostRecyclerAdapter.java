@@ -65,10 +65,10 @@ class PostViewHolder extends RecyclerView.ViewHolder {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         String m_Text = input.getText().toString();
-                        Firestore.editPost(postId, m_Text, new OnCompleteListener<QuerySnapshot>() {
+                        Firestore.editPost(postId, m_Text, new OnCompleteListener<Void>() {
                             @Override
-                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                                System.out.println("nadav");
+                            public void onComplete(@NonNull Task<Void> task) {
+                                descTv.setText(m_Text);
                             }
                         });
                     }

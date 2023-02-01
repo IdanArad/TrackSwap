@@ -44,11 +44,11 @@ public class Firestore {
                         .addOnCompleteListener(listener);
     }
 
-    public static void editPost(String postId, String newDesc, OnCompleteListener<QuerySnapshot> listener) {
+    public static void editPost(String postId, String newDesc, OnCompleteListener<Void> listener) {
         Map<String, Object> updateMap= new HashMap<>();
         updateMap.put("desc", newDesc);
         db.collection("published_tracks")
                 .document(postId)
-                .update(updateMap);
+                .update(updateMap).addOnCompleteListener(listener);
     }
 }
