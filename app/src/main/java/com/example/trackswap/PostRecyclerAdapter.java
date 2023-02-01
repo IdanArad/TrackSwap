@@ -54,7 +54,6 @@ class PostViewHolder extends RecyclerView.ViewHolder {
             @Override
             public void onClick(View view) {
                 int pos = getAdapterPosition();
-                listener.onItemClick(pos);
             }
         });
 
@@ -145,10 +144,6 @@ public class PostRecyclerAdapter extends RecyclerView.Adapter<PostViewHolder> {
     public PostRecyclerAdapter(LayoutInflater inflater, List<Post> data) {
         this.inflater = inflater;
         this.data = data;
-    }
-
-    void setOnItemClickListener(OnItemClickListener listener) {
-        this.listener = listener;
     }
 
     @NonNull
