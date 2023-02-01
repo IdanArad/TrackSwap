@@ -66,7 +66,7 @@ public class ModelPosts {
                         JSONObject jsonObject = new JSONObject(document.getData());
                         try {
                             Track currentTrack = new Track(jsonObject.getString("name"), jsonObject.getString("artist"));
-                            Post currentPost = new Post(currentTrack, jsonObject.getString("publisher_uid"), jsonObject.getString("desc"));
+                            Post currentPost = new Post(currentTrack, jsonObject.getString("publisher_uid"), jsonObject.getString("desc"), document.getId());
                             fetchedPosts.add(currentPost);
                         } catch (JSONException e) {
                             e.printStackTrace();
