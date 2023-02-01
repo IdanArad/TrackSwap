@@ -28,6 +28,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.AuthResult;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.UserProfileChangeRequest;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -104,7 +105,7 @@ public class RegistrationActivity extends AppCompatActivity {
                         if (task.isSuccessful()) {
                             // Add a new document with a generated id.
                             Map<String, Object> data = new HashMap<>();
-                            data.put("username", email);
+                            data.put("username", email.split("@")[0]);
                             data.put("password", password);
                             data.put("uid", FirebaseAuth.getInstance().getCurrentUser().getUid());
 
@@ -112,6 +113,10 @@ public class RegistrationActivity extends AppCompatActivity {
                                     .addOnSuccessListener(new OnSuccessListener<Void>() {
                                         @Override
                                         public void onSuccess(Void aVoid) {
+                                            UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
+                                                    .setDisplayName(email.split("@")[0])
+                                                    .build();
+                                            FirebaseAuth.getInstance().getCurrentUser().updateProfile(profileUpdates);
                                             Log.d("TAG", "Document has been added with custom ID");
                                         }
                                     })
