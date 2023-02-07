@@ -99,6 +99,7 @@ class PostViewHolder extends RecyclerView.ViewHolder {
         nameTv.setText(post.track.name);
         artistTv.setText(post.track.artist);
         descTv.setText(post.desc);
+        publisherTv.setText("");
         DocumentReference docRef = Firestore.instance().getDb().collection("users").document(post.getPublisher_uid());
         docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override

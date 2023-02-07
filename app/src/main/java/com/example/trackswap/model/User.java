@@ -1,6 +1,17 @@
 package com.example.trackswap.model;
 
+import androidx.annotation.NonNull;
+import androidx.room.ColumnInfo;
+import androidx.room.Entity;
+import androidx.room.PrimaryKey;
+
+@Entity
 public class User {
-    public String name;
-    public String artist;
+    @PrimaryKey
+    @NonNull
+    public String uid;
+    @ColumnInfo(name = "displayname")
+    public String displayName;
+    public String password;
+
 }

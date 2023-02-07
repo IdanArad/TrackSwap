@@ -5,6 +5,10 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
+import androidx.room.ColumnInfo;
+import androidx.room.Embedded;
+import androidx.room.Entity;
+import androidx.room.PrimaryKey;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -17,17 +21,22 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
+@Entity
 public class Post implements Comparable{
+    @PrimaryKey
+    @NonNull
     public String id;
     public String publisher_uid;
+    @Embedded
     public Track track;
     public String desc;
     public Date timestamp;
+    public String imageUrl;
 
     public Post(Track track, String publisher_uid, String desc, String id, Date timestamp) {
         this.track = track;
         this.publisher_uid = publisher_uid;
+
         this.desc = desc;
         this.id = id;
         this.timestamp = timestamp;
