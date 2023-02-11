@@ -6,6 +6,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -37,11 +38,17 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.storage.FileDownloadTask;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.StreamDownloadTask;
+import com.google.firebase.storage.UploadTask;
+import com.squareup.picasso.Picasso;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -57,15 +64,20 @@ public class ProfileFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_profile, container, false);
-//        Firestore.instance().fetchPosts();
-        data = ModelPosts.instance().getMyPosts(FirebaseAuth.getInstance().getCurrentUser().getUid(), viewModel.getData().getValue());
+        String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        data = ModelPosts.instance().getMyPosts(userId, viewModel.getData().getValue());
         RecyclerView list = view.findViewById(R.id.tracklistfrag_list);
         list.setHasFixedSize(true);
 
         TextView textName = view.findViewById(R.id.name_profile_id);
         textName.setText(FirebaseAuth.getInstance().getCurrentUser().getDisplayName());
         ImageView profilePicImageView = view.findViewById(R.id.profile_pic);
-        profilePicView = profilePicImageView;
+        FirebaseStorage.getInstance().getReference().child("images").child(userId + ".jpeg").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+            @Override
+            public void onSuccess(Uri uri) {
+                Picasso.get().load(uri).into(profilePicImageView);
+            }
+        });
         TextView profilePicChange = view.findViewById(R.id.change_pic_profile_id);
         profilePicChange.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -143,28 +155,24 @@ public class ProfileFragment extends Fragment {
 
         if (resultCode == Activity.RESULT_OK) {
 
-            String encodedImage= "";
+            String encodedImage = "";
             if (requestCode == SELECT_PICTURE) {
                 Uri selectedImageUri = data.getData();
                 if (null != selectedImageUri) {
                     try {
                         Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getActivity().getContentResolver(), selectedImageUri);
-                        encodedImage = encodeImage(bitmap);
+                        Firestore.editUserProfilePic(FirebaseAuth.getInstance().getCurrentUser().getUid(), bitmap, new OnSuccessListener<Uri>() {
+                            @Override
+                            public void onSuccess(@NonNull Uri task) {
+                                Toast.makeText(getContext(),
+                                                "Picture Changed successfully",
+                                                Toast.LENGTH_LONG)
+                                        .show();
+                            }
+                        });
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
-
-
-                    profilePicView.setImageURI(selectedImageUri);
-                    Firestore.editUserProfilePic(FirebaseAuth.getInstance().getCurrentUser().getUid(), encodedImage, new OnCompleteListener<Void>() {
-                        @Override
-                        public void onComplete(@NonNull Task<Void> task) {
-                            Toast.makeText(getContext(),
-                                            "Picture Changed successfully",
-                                            Toast.LENGTH_LONG)
-                                    .show();
-                        }
-                    });
                 }
             }
         }

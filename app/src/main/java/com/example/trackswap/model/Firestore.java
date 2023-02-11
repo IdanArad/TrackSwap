@@ -1,5 +1,6 @@
 package com.example.trackswap.model;
 
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.util.Log;
 
@@ -15,6 +16,7 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
+import java.io.ByteArrayOutputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.HashMap;
@@ -57,20 +59,24 @@ public class Firestore {
                 .update(updateMap).addOnCompleteListener(listener);
     }
 
-    public static void editUserProfilePic(String userId, String imgUri, OnCompleteListener<Void> listener) {
+    public static void editUserProfilePic(String userId, Bitmap bitmap, OnSuccessListener<Uri> listener) {
         FirebaseStorage storage = FirebaseStorage.getInstance();
         StorageReference storageReference = storage.getReference();
-        StorageReference ref
-                = storageReference
-                .child(
-                        "images/"
-                                + userId);
-        ref.putBytes(imgUri.getBytes(StandardCharsets.UTF_8)).addOnFailureListener(new OnFailureListener() {
+        StorageReference storageImageRef = storageReference.child("images").child(userId + ".jpeg");
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 50, baos);
+        byte[] data = baos.toByteArray();
+        UploadTask uploadTask = storageImageRef.putBytes(data);
+        uploadTask.addOnFailureListener(new OnFailureListener() {
             @Override
-            public void onFailure(@NonNull Exception e) {
-                Log.d("Failed to upload: ", e.getMessage());
+            public void onFailure(@NonNull Exception exception) {
+                Log.d("uploadImage", "onFailure: failed to fetch", exception);
             }
-
+        }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                storageImageRef.getDownloadUrl().addOnSuccessListener(listener);
+            }
         });
     }
 }

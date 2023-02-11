@@ -168,7 +168,7 @@ public class AddPostFragment extends Fragment {
                     String format = "json";
 
                     String url = baseUrl + "?method=" + method + "&track=" + track + "&artist=" + artist + "&api_key=" + apiKey + "&format=" + format;
-
+                    
                     HttpURLConnection connection = null;
                     try {
                         connection = (HttpURLConnection) new URL(url).openConnection();
@@ -183,6 +183,8 @@ public class AddPostFragment extends Fragment {
                             response.append(line);
                         }
                         reader.close();
+                        
+//                        String artistPhoto = getArtistPhoto(artist);
 
                         // Parse the response into a Java object using a JSON parser
                         JSONObject jsonObject = new JSONObject(response.toString());
@@ -218,6 +220,29 @@ public class AddPostFragment extends Fragment {
 
         gfgThread.start();
         gfgThread.join();
+    }
+    
+    public static String getArtistPhoto(String artistName) {
+        try {
+
+            String url = "https://musicbrainz.org/ws/2/artist/f27ec8db-af05-4f36-916e-3d57f91ecf5e?inc=url-rels";
+            HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
+            connection.setRequestMethod("GET");
+
+            // Read the response from the LastFM API
+            InputStream inputStream = connection.getInputStream();
+            BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+            StringBuilder response = new StringBuilder();
+            String line;
+            while ((line = reader.readLine()) != null) {
+                response.append(line);
+            }
+            reader.close();
+            return "";
+        } catch (Exception e) {
+            Log.d(TAG, "getArtistPhoto: failed to fetch", e);
+            return "";
+        }
     }
 
 }
