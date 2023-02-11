@@ -36,9 +36,6 @@ public class TrackListFragment extends Fragment {
         TrackRecyclerAdapter adapter = new TrackRecyclerAdapter(getLayoutInflater(), data);
         list.setAdapter(adapter);
 
-        // View addButton = view.findViewById(R.id.tracklistfrag_add_btn);
-        //  NavDirections action = TracksListFragmentDirections.actionGlobalAddTrackFragment();
-        // addButton.setOnClickListener(Navigation.createNavigateOnClickListener(action));
         return view;
     }
 }
