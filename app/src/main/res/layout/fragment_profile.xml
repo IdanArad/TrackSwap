@@ -23,8 +23,16 @@
                 android:id="@+id/profile_pic"
                 android:layout_width="150dp"
                 android:layout_height="150dp"
-                android:src="@drawable/avatar"
                 android:scaleType="centerCrop"/>
+
+            <ProgressBar
+                android:id="@+id/profile_loader"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="20dp"
+                android:layout_marginTop="20dp"
+                android:indeterminate="true" />
+
         </androidx.cardview.widget.CardView>
     </androidx.cardview.widget.CardView>
     <TextView

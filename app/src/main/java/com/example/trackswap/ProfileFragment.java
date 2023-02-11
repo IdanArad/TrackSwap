@@ -24,6 +24,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -57,6 +58,7 @@ public class ProfileFragment extends Fragment {
     List<Post> data;
     PostsListViewModel viewModel = new PostsListViewModel();
     ImageView profilePicView;
+    ProgressBar profileLoader;
     int SELECT_PICTURE = 200;
 
     @Override
@@ -72,9 +74,12 @@ public class ProfileFragment extends Fragment {
         TextView textName = view.findViewById(R.id.name_profile_id);
         textName.setText(FirebaseAuth.getInstance().getCurrentUser().getDisplayName());
         ImageView profilePicImageView = view.findViewById(R.id.profile_pic);
+        profileLoader = view.findViewById(R.id.profile_loader);
+        profilePicView = profilePicImageView;
         FirebaseStorage.getInstance().getReference().child("images").child(userId + ".jpeg").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
             @Override
             public void onSuccess(Uri uri) {
+                profileLoader.setVisibility(View.GONE);
                 Picasso.get().load(uri).into(profilePicImageView);
             }
         });
@@ -158,12 +163,13 @@ public class ProfileFragment extends Fragment {
             String encodedImage = "";
             if (requestCode == SELECT_PICTURE) {
                 Uri selectedImageUri = data.getData();
+                profilePicView.setImageURI(selectedImageUri);
                 if (null != selectedImageUri) {
                     try {
                         Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getActivity().getContentResolver(), selectedImageUri);
                         Firestore.editUserProfilePic(FirebaseAuth.getInstance().getCurrentUser().getUid(), bitmap, new OnSuccessListener<Uri>() {
                             @Override
-                            public void onSuccess(@NonNull Uri task) {
+                            public void onSuccess(@NonNull Uri uri) {
                                 Toast.makeText(getContext(),
                                                 "Picture Changed successfully",
                                                 Toast.LENGTH_LONG)
