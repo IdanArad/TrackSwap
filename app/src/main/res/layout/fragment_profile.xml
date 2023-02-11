@@ -35,33 +35,41 @@
 
         </androidx.cardview.widget.CardView>
     </androidx.cardview.widget.CardView>
+
     <TextView
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
         android:id="@+id/name_profile_id"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
         android:text="Name"
-        app:layout_constraintTop_toBottomOf="@id/profile_avatar_img" />
-    <TextView
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/profile_avatar_img" />
+
+    <TextView
         android:id="@+id/change_pic_profile_id"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="157dp"
+        android:layout_height="29dp"
+        android:layout_marginTop="12dp"
         android:background="#dadada"
         android:clickable="true"
         android:text="Change Profile Picture"
-        app:layout_constraintTop_toBottomOf="@id/name_profile_id" />
-    <TextView
+        app:layout_constraintHorizontal_bias="0.503"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/name_profile_id" />
+
+    <TextView
         android:id="@+id/change_name_profile_id"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="157dp"
+        android:layout_height="25dp"
+        android:layout_marginTop="12dp"
         android:background="#dadada"
         android:clickable="true"
         android:text="Change Username"
+        app:layout_constraintHorizontal_bias="0.514"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@id/change_pic_profile_id" />
 
     <androidx.recyclerview.widget.RecyclerView
