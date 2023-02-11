@@ -2,6 +2,7 @@ package com.example.trackswap;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.net.Uri;
 import android.text.InputType;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -9,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -29,11 +31,14 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.storage.FirebaseStorage;
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
 
 class PostViewHolder extends RecyclerView.ViewHolder {
+    ImageView avatarImg;
     TextView nameTv;
     TextView artistTv;
     TextView descTv;
@@ -47,7 +52,7 @@ class PostViewHolder extends RecyclerView.ViewHolder {
         artistTv = itemView.findViewById(R.id.tracklistrow_id_tv);
         publisherTv = itemView.findViewById(R.id.publisher_name_tv);
         descTv = itemView.findViewById(R.id.tracklistrow_desc_tv);
-
+        avatarImg = itemView.findViewById(R.id.tracklistrow_avatar_img);
         editButton = itemView.findViewById(R.id.edit_button);
 
         itemView.setOnClickListener(new View.OnClickListener() {
@@ -100,6 +105,7 @@ class PostViewHolder extends RecyclerView.ViewHolder {
         artistTv.setText(post.track.artist);
         descTv.setText(post.desc);
         publisherTv.setText("");
+        String userID = FirebaseAuth.getInstance().getCurrentUser().getUid();
         DocumentReference docRef = Firestore.instance().getDb().collection("users").document(post.getPublisher_uid());
         docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
@@ -107,6 +113,7 @@ class PostViewHolder extends RecyclerView.ViewHolder {
                 if (documentSnapshot.exists()) {
                     String fieldValue = documentSnapshot.getString("displayname");
                     publisherTv.setText(fieldValue);
+
                 } else {
                     Log.d("TAG", "Document does not exist");
                     publisherTv.setText("No User");
@@ -120,11 +127,18 @@ class PostViewHolder extends RecyclerView.ViewHolder {
             }
         });
 
-        if (post.getPublisher_uid().equals(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
+        if (post.getPublisher_uid().equals(userID)) {
             editButton.setVisibility(View.VISIBLE);
         } else {
             editButton.setVisibility(View.GONE);
         }
+
+        FirebaseStorage.getInstance().getReference().child("images").child(post.getPublisher_uid() + ".jpeg").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+            @Override
+            public void onSuccess(Uri uri) {
+                Picasso.get().load(uri).into(avatarImg);
+            }
+        });
     }
 
     public void setId(String id) {
